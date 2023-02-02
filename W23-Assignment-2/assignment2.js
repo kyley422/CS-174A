@@ -90,6 +90,8 @@ export class Assignment2 extends Base_Scene {
      * This gives you a very small code sandbox for editing a simple scene, and for
      * experimenting with matrix transformations.
      */
+    sit_still = false
+
     set_colors() {
         // TODO:  Create a class member variable to store your cube's colors.
         // Hint:  You might need to create a member variable at somewhere to store the colors, using `this`.
@@ -105,6 +107,12 @@ export class Assignment2 extends Base_Scene {
         });
         this.key_triggered_button("Sit still", ["m"], () => {
             // TODO:  Requirement 3d:  Set a flag here that will toggle your swaying motion on and off.
+            if (this.sit_still) {
+                this.sit_still = false
+            }
+            else {
+                this.sit_still = true
+            }
         });
     }
 
@@ -119,7 +127,10 @@ export class Assignment2 extends Base_Scene {
         // Hint:  You can add more parameters for this function, like the desired color, index of the box, etc.
         const blue = hex_color("#1a9ffa"), yellow = hex_color("#fdc03a");
         const t1 = Mat4.translation(1,1,0)
-        const R = Mat4.rotation(this.get_periodic_angle(program_state.animation_time/1000),0,0,1)
+        let R = Mat4.rotation(this.get_periodic_angle(program_state.animation_time/1000),0,0,1)
+        if (this.sit_still) {
+            R = Mat4.rotation(0.05*Math.PI,0,0,1)
+        }
         const t2 = Mat4.inverse(t1)
         const t3 = Mat4.translation(0,2,0)
 
