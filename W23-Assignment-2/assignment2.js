@@ -90,7 +90,14 @@ export class Assignment2 extends Base_Scene {
      * This gives you a very small code sandbox for editing a simple scene, and for
      * experimenting with matrix transformations.
      */
-    sit_still = false
+    constructor() {
+        super();
+        this.sit_still = false
+        this.box_colors = []
+        for (let i = 0; i < 8; i++) {
+            this.box_colors.push(color(Math.random(), Math.random(), Math.random(), 1.0))
+        }
+    }
 
     set_colors() {
         // TODO:  Create a class member variable to store your cube's colors.
@@ -121,7 +128,7 @@ export class Assignment2 extends Base_Scene {
         return y
     }
 
-    draw_box(context, program_state, model_transform) {
+    draw_box(context, program_state, model_transform, box_number) {
         // TODO:  Helper function for requirement 3 (see hint).
         //        This should make changes to the model_transform matrix, draw the next box, and return the newest model_transform.
         // Hint:  You can add more parameters for this function, like the desired color, index of the box, etc.
@@ -135,7 +142,7 @@ export class Assignment2 extends Base_Scene {
         const t3 = Mat4.translation(0,2,0)
 
         model_transform = model_transform.times(t3.times(t2.times(R.times(t1))))
-        this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:blue}));
+        this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:this.box_colors[box_number]}));
         return model_transform;
     }
 
@@ -144,10 +151,10 @@ export class Assignment2 extends Base_Scene {
         const blue = hex_color("#1a9ffa"), yellow = hex_color("#fdc03a");
         let model_transform = Mat4.identity();
         
-        this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:blue}));
+        this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:this.box_colors[0]}));
         //Example for drawing a cube, you can remove this line if needed
-        for (let i = 0; i < 7; i++) {
-            model_transform = this.draw_box(context, program_state, model_transform)
+        for (let i = 1; i < 8; i++) {
+            model_transform = this.draw_box(context, program_state, model_transform, i)
         }
 
         //this.draw_box(context, program_state, model_transform)
