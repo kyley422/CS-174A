@@ -103,6 +103,9 @@ export class Assignment2 extends Base_Scene {
         // TODO:  Create a class member variable to store your cube's colors.
         // Hint:  You might need to create a member variable at somewhere to store the colors, using `this`.
         // Hint2: You can consider add a constructor for class Assignment2, or add member variables in Base_Scene's constructor.
+        for (let i = 0; i < 8; i++) {
+            this.box_colors[i] = color(Math.random(), Math.random(), Math.random(), 1.0)
+        }
     }
 
     make_control_panel() {
