@@ -108,21 +108,42 @@ export class Assignment2 extends Base_Scene {
         });
     }
 
+    get_periodic_angle(t) {
+        let y = 0.025*Math.PI*Math.sin(2*Math.PI*t) + 0.025*Math.PI
+        return y
+    }
+
     draw_box(context, program_state, model_transform) {
         // TODO:  Helper function for requirement 3 (see hint).
         //        This should make changes to the model_transform matrix, draw the next box, and return the newest model_transform.
         // Hint:  You can add more parameters for this function, like the desired color, index of the box, etc.
+        const blue = hex_color("#1a9ffa"), yellow = hex_color("#fdc03a");
+        const t1 = Mat4.translation(1,1,0)
+        const R = Mat4.rotation(this.get_periodic_angle(program_state.animation_time/1000),0,0,1)
+        const t2 = Mat4.inverse(t1)
+        const t3 = Mat4.translation(0,2,0)
 
+        model_transform = model_transform.times(t3.times(t2.times(R.times(t1))))
+        this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:blue}));
         return model_transform;
     }
 
     display(context, program_state) {
         super.display(context, program_state);
-        const blue = hex_color("#1a9ffa");
+        const blue = hex_color("#1a9ffa"), yellow = hex_color("#fdc03a");
         let model_transform = Mat4.identity();
-
-        // Example for drawing a cube, you can remove this line if needed
+        
         this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:blue}));
+        //Example for drawing a cube, you can remove this line if needed
+        for (let i = 0; i < 7; i++) {
+            model_transform = this.draw_box(context, program_state, model_transform)
+        }
+
+        //this.draw_box(context, program_state, model_transform)
+
+        //this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:blue}));
+        // model_transform = model_transform.times(t3.times(t2.times(R.times(t1))))
+        // this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:yellow}));
         // TODO:  Draw your entire scene here.  Use this.draw_box( graphics_state, model_transform ) to call your helper.
     }
 }
