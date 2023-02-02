@@ -104,6 +104,7 @@ export class Assignment2 extends Base_Scene {
     constructor() {
         super();
         this.sit_still = false
+        this.outline_mode = false
         this.box_colors = []
         for (let i = 0; i < 8; i++) {
             this.box_colors.push(color(Math.random(), Math.random(), Math.random(), 1.0))
@@ -125,15 +126,11 @@ export class Assignment2 extends Base_Scene {
         // Add a button for controlling the scene.
         this.key_triggered_button("Outline", ["o"], () => {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
+            this.outline_mode = !(this.outline_mode)
         });
         this.key_triggered_button("Sit still", ["m"], () => {
             // TODO:  Requirement 3d:  Set a flag here that will toggle your swaying motion on and off.
-            if (this.sit_still) {
-                this.sit_still = false
-            }
-            else {
-                this.sit_still = true
-            }
+            this.sit_still = !(this.sit_still)
         });
     }
 
@@ -156,7 +153,12 @@ export class Assignment2 extends Base_Scene {
         const t3 = Mat4.translation(0,2,0)
 
         model_transform = model_transform.times(t3.times(t2.times(R.times(t1))))
-        this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:this.box_colors[box_number]}));
+        if (this.outline_mode) {
+            this.shapes.outline.draw(context, program_state, model_transform, this.white, "LINES")
+        }
+        else {
+            this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:this.box_colors[box_number]}));
+        }
         return model_transform;
     }
 
@@ -165,13 +167,17 @@ export class Assignment2 extends Base_Scene {
         const blue = hex_color("#1a9ffa"), yellow = hex_color("#fdc03a");
         let model_transform = Mat4.identity();
         
-        // this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:this.box_colors[0]}));
-        // //Example for drawing a cube, you can remove this line if needed
-        // for (let i = 1; i < 8; i++) {
-        //     model_transform = this.draw_box(context, program_state, model_transform, i)
-        // }
+        if (this.outline_mode) {
+            this.shapes.outline.draw(context, program_state, model_transform, this.white, "LINES")
+        }
+        else {
+            this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:this.box_colors[0]}));
+        }
 
-        this.shapes.outline.draw(context, program_state, model_transform, this.white, "LINES")
+        for (let i = 1; i < 8; i++) {
+            model_transform = this.draw_box(context, program_state, model_transform, i)
+        }
+
 
         //this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:blue}));
         // model_transform = model_transform.times(t3.times(t2.times(R.times(t1))))
