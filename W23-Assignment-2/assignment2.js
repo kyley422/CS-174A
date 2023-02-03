@@ -152,15 +152,17 @@ export class Assignment2 extends Base_Scene {
         //        This should make changes to the model_transform matrix, draw the next box, and return the newest model_transform.
         // Hint:  You can add more parameters for this function, like the desired color, index of the box, etc.
         const blue = hex_color("#1a9ffa"), yellow = hex_color("#fdc03a");
-        const t1 = Mat4.translation(1,1,0)
+        const t1 = Mat4.translation(1,1.5,0)
         let R = Mat4.rotation(this.get_periodic_angle(program_state.animation_time/1000),0,0,1)
         if (this.sit_still) {
             R = Mat4.rotation(0.05*Math.PI,0,0,1)
         }
         const t2 = Mat4.inverse(t1)
-        const t3 = Mat4.translation(0,2,0)
+        const t3 = Mat4.translation(0,3,0)
 
-        model_transform = model_transform.times(t3.times(t2.times(R.times(t1))))
+        // model_transform = model_transform.times(t3.times(t2.times(R.times(t1))))
+        model_transform = t3.times(t2.times(R.times(t1.times(model_transform))))
+
         if (this.outline_mode) {
             this.shapes.outline.draw(context, program_state, model_transform, this.white, "LINES")
         }
@@ -179,6 +181,7 @@ export class Assignment2 extends Base_Scene {
         super.display(context, program_state);
         const blue = hex_color("#1a9ffa"), yellow = hex_color("#fdc03a");
         let model_transform = Mat4.identity();
+        model_transform = Mat4.scale(1,1.5,1)
         
         if (this.outline_mode) {
             this.shapes.outline.draw(context, program_state, model_transform, this.white, "LINES")
