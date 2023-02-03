@@ -47,6 +47,13 @@ class Cube_Single_Strip extends Shape {
     constructor() {
         super("position", "normal");
         // TODO (Requirement 6)
+        this.arrays.position = Vector3.cast(
+            [-1,-1,1],[-1,1,1],[1,-1,1],[1,1,1],[-1,-1,-1],[-1,1,-1],[1,-1,-1],[1,1,-1]
+        )
+        this.arrays.normal = this.arrays.position
+        this.indices.push(0,1,4,4,5,1,1,3,5,5,3,7,7,3,2,2,7,6,6,4,2,2,0,4,4,5,6,6,5,7,0,1,2,2,1,3)
+            
+        //,5,1,3,5,7,3,2,1,0,2,3,7,6,2,4,2,6,4,5,7,6)
     }
 }
 
@@ -64,6 +71,7 @@ class Base_Scene extends Scene {
         this.shapes = {
             'cube': new Cube(),
             'outline': new Cube_Outline(),
+            'strip': new  Cube_Single_Strip(),
         };
 
         // *** Materials
@@ -157,7 +165,12 @@ export class Assignment2 extends Base_Scene {
             this.shapes.outline.draw(context, program_state, model_transform, this.white, "LINES")
         }
         else {
-            this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:this.box_colors[box_number]}));
+            if ((box_number+1) % 2 == 0) {
+                this.shapes.strip.draw(context, program_state, model_transform, this.materials.plastic.override({color:this.box_colors[box_number]}, "TRIANGLE_STRIP"));
+            }
+            else {
+                this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:this.box_colors[box_number]}));
+            }
         }
         return model_transform;
     }
