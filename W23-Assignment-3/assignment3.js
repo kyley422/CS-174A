@@ -114,8 +114,8 @@ export class Assignment3 extends Scene {
         model_transform = model_transform.times(Mat4.translation(11*Math.sin(0.6*t), 0, 11*Math.cos(0.6*t)))
         model_transform = model_transform.times(Mat4.rotation(0.6*t,0,1,0))
         this.shapes.s4.draw(context, program_state, model_transform, this.materials.planet3)
-        model_transform = model_transform.times(Mat4.scale(2,2,0.1))
-        this.shapes.torus.draw(context, program_state, model_transform, this.materials.planet3)
+        model_transform = model_transform.times(Mat4.scale(3,3,0.1))
+        this.shapes.torus.draw(context, program_state, model_transform, this.materials.ring)
     }
 }
 
@@ -298,7 +298,9 @@ class Ring_Shader extends Shader {
         uniform mat4 projection_camera_model_transform;
         
         void main(){
-          
+          center = model_transform * vec4(0,0,0,1);
+          point_position = model_transform * vec4(position,1);
+          gl_Position = projection_camera_model_transform * vec4(position,1);
         }`;
     }
 
@@ -307,7 +309,8 @@ class Ring_Shader extends Shader {
         // TODO:  Complete the main function of the fragment shader (Extra Credit Part II).
         return this.shared_glsl_code() + `
         void main(){
-          
+          float c = sin(19.0 * distance(point_position.xyz,center.xyz));
+          gl_FragColor = c * vec4(0.69, 0.501, 0.25, 1.0);
         }`;
     }
 }
