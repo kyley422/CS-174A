@@ -35,7 +35,9 @@ export class Assignment3 extends Scene {
                 {ambient: 1, color: hex_color("ff0000")}),
             planet1: new Material(new defs.Phong_Shader(),
                 {ambient: 0, diffusivity: 1, specularity: 0, color: hex_color("#808080")}),
-            planet2: new Material(new defs.Phong_Shader(),
+            planet2_phong: new Material(new defs.Phong_Shader(),
+                {ambient: 0, diffusivity: 0.3, specularity: 1, color: hex_color("#80FFFF")}),
+            planet2_gouraud: new Material(new Gouraud_Shader(),
                 {ambient: 0, diffusivity: 0.3, specularity: 1, color: hex_color("#80FFFF")}),
         }
 
@@ -97,7 +99,16 @@ export class Assignment3 extends Scene {
         /* Planet 2 */
         model_transform = Mat4.identity()
         model_transform = model_transform.times(Mat4.translation(8*Math.sin(0.8*t), 0, 8*Math.cos(0.8*t)))
-        this.shapes.s3.draw(context, program_state, model_transform, this.materials.planet2)
+        model_transform = model_transform.times(Mat4.rotation(0.8*t,0,1,0))
+        if (Math.floor(t%2) == 0) {
+            this.shapes.s3.draw(context, program_state, model_transform, this.materials.planet2_phong)
+        }
+        else {
+            this.shapes.s3.draw(context, program_state, model_transform, this.materials.planet2_gouraud)
+        }
+
+        /* Planet 3 */
+
     }
 }
 
@@ -125,6 +136,7 @@ class Gouraud_Shader extends Shader {
         // on to the next phase (fragment shader), then interpolated per-fragment, weighted by the
         // pixel fragment's proximity to each of the 3 vertices (barycentric interpolation).
         varying vec3 N, vertex_worldspace;
+        varying vec3 vertex_color;
         // ***** PHONG SHADING HAPPENS HERE: *****                                       
         vec3 phong_model_lights( vec3 N, vec3 vertex_worldspace ){                                        
             // phong_model_lights():  Add up the lights' contributions.
@@ -172,6 +184,9 @@ class Gouraud_Shader extends Shader {
                 // The final normal vector in screen space.
                 N = normalize( mat3( model_transform ) * normal / squared_scale);
                 vertex_worldspace = ( model_transform * vec4( position, 1.0 ) ).xyz;
+                // vec3 N = normalize(mat3(model_transform)*normal/squared_scale);
+                // vec3 vertex_worldspace = (model_transform*vec4(position,1.0)).xyz;
+                vertex_color = phong_model_lights(N,vertex_worldspace);
             } `;
     }
 
@@ -182,7 +197,8 @@ class Gouraud_Shader extends Shader {
         return this.shared_glsl_code() + `
             void main(){                                                           
                 // Compute an initial (ambient) color:
-                gl_FragColor = vec4( shape_color.xyz * ambient, shape_color.w );
+                // gl_FragColor = vec4( shape_color.xyz * ambient, shape_color.w );
+                gl_FragColor = vec4(vertex_color.xyz,1.0);
                 // Compute the final color with contributions from lights:
                 gl_FragColor.xyz += phong_model_lights( normalize( N ), vertex_worldspace );
             } `;
