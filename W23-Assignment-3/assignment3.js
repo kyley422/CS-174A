@@ -101,6 +101,7 @@ export class Assignment3 extends Scene {
         model_transform = model_transform.times(Mat4.translation(5*Math.sin(t), 0, 5*Math.cos(t)))
         model_transform = model_transform.times(Mat4.rotation(t,0,1,0))
         this.shapes.s2.draw(context, program_state, model_transform, this.materials.planet1)
+        this.planet_1 = model_transform
 
         /* Planet 2 */
         model_transform = Mat4.identity()
@@ -112,12 +113,14 @@ export class Assignment3 extends Scene {
         else {
             this.shapes.s3.draw(context, program_state, model_transform, this.materials.planet2_gouraud)
         }
+        this.planet_2 = model_transform
 
         /* Planet 3 */
         model_transform = Mat4.identity()
         model_transform = model_transform.times(Mat4.translation(11*Math.sin(0.6*t), 0, 11*Math.cos(0.6*t)))
         model_transform = model_transform.times(Mat4.rotation(0.6*t,0,1,0))
         this.shapes.s4.draw(context, program_state, model_transform, this.materials.planet3)
+        this.planet_3 = model_transform.times(Mat4.translation(3,0,-1))
         /* Ring */
         model_transform = model_transform.times(Mat4.scale(3,3,0.1))
         this.shapes.torus.draw(context, program_state, model_transform, this.materials.ring)
@@ -127,10 +130,22 @@ export class Assignment3 extends Scene {
         model_transform = model_transform.times(Mat4.translation(14*Math.sin(0.4*t), 0, 14*Math.cos(0.4*t)))
         model_transform = model_transform.times(Mat4.rotation(0.4*t,0,1,0))
         this.shapes.s4.draw(context, program_state, model_transform, this.materials.planet4)
+        this.planet_4 = model_transform
         /* Moon */
         model_transform = model_transform.times(Mat4.translation(2.5*Math.sin(0.2*t), 0, 2.5*Math.cos(0.2*t)))
         model_transform = model_transform.times(Mat4.rotation(0.2*t,0,1,0))
         this.shapes.s1.draw(context, program_state, model_transform, this.materials.moon)
+        this.moon = model_transform
+
+        let desired
+        if (this.attached && this.attached() != null) {
+            desired = Mat4.inverse(this.attached().times(Mat4.rotation(2*Math.PI/3,0,1,0).times(Mat4.translation(0,0,5))))
+        }
+        else {
+            desired = this.initial_camera_location
+        }
+        let target = desired.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x,0.1))
+        program_state.set_camera(target)
     }
 }
 
