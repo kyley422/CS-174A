@@ -36,7 +36,7 @@ export class Assignment3 extends Scene {
             planet1: new Material(new defs.Phong_Shader(),
                 {ambient: 0, diffusivity: 1, specularity: 0, color: hex_color("#808080")}),
             planet2: new Material(new defs.Phong_Shader(),
-                {ambient: 0, diffusivity: 0.2, specularity: 1}),
+                {ambient: 0, diffusivity: 0.3, specularity: 1, color: hex_color("#80FFFF")}),
         }
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
@@ -96,7 +96,7 @@ export class Assignment3 extends Scene {
 
         /* Planet 2 */
         model_transform = Mat4.identity()
-        model_transform = model_transform.times(Mat4.translation(8*Math.sin(0.25*t), 0, 8*Math.cos(0.25*t)))
+        model_transform = model_transform.times(Mat4.translation(8*Math.sin(0.8*t), 0, 8*Math.cos(0.8*t)))
         this.shapes.s3.draw(context, program_state, model_transform, this.materials.planet2)
     }
 }
