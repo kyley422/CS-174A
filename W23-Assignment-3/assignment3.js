@@ -14,7 +14,7 @@ export class Assignment3 extends Scene {
             torus: new defs.Torus(15, 15),
             torus2: new defs.Torus(3, 15),
             s1: new defs.Subdivision_Sphere(1),
-            s2: new defs.Subdivision_Sphere(2),
+            s2: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
             s3: new defs.Subdivision_Sphere(3),
             s4: new defs.Subdivision_Sphere(4),
             circle: new defs.Regular_2D_Polygon(1, 15),
@@ -29,10 +29,14 @@ export class Assignment3 extends Scene {
             test2: new Material(new Gouraud_Shader(),
                 {ambient: .4, diffusivity: .6, color: hex_color("#992828")}),
             ring: new Material(new Ring_Shader()),
-            sun: new Material(new defs.Phong_Shader(),
-                {ambient: 1, color: hex_color("ff0000")}),
             // TODO:  Fill in as many additional material objects as needed in this key/value table.
             //        (Requirement 4)
+            sun: new Material(new defs.Phong_Shader(),
+                {ambient: 1, color: hex_color("ff0000")}),
+            planet1: new Material(new defs.Phong_Shader(),
+                {ambient: 0, diffusivity: 1, specularity: 0, color: hex_color("#808080")}),
+            planet2: new Material(new defs.Phong_Shader(),
+                {ambient: 0, diffusivity: 0.2, specularity: 1}),
         }
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
@@ -70,7 +74,8 @@ export class Assignment3 extends Scene {
         // TODO: Lighting (Requirement 2)
         const light_position = vec4(0, 0, 0, 1);
         // The parameters of the Light are: position, color, size
-        program_state.lights = [new Light(light_position, color(1, 1, 1, 1), 10**sunRadius)];
+        program_state.lights = [new Light(light_position, sunColor, 10**sunRadius)];
+        // program_state.lights = [new Light(vec4(0, 5, 5, 1), color(1, 1, 1, 1), 1000)];
 
         // TODO:  Fill in matrix operations and drawing code to draw the solar system scene (Requirements 3 and 4)
         const yellow = hex_color("#fac91a");
@@ -82,6 +87,17 @@ export class Assignment3 extends Scene {
         /* Sun */
         model_transform = model_transform.times(Mat4.scale(sunRadius,sunRadius,sunRadius))
         this.shapes.s4.draw(context, program_state, model_transform, this.materials.sun.override({color: sunColor}))
+
+        /* Planet 1 */
+        model_transform = Mat4.identity()
+        model_transform = model_transform.times(Mat4.translation(5*Math.sin(t), 0, 5*Math.cos(t)))
+        model_transform = model_transform.times(Mat4.rotation(t,0,1,0))
+        this.shapes.s2.draw(context, program_state, model_transform, this.materials.planet1)
+
+        /* Planet 2 */
+        model_transform = Mat4.identity()
+        model_transform = model_transform.times(Mat4.translation(8*Math.sin(0.25*t), 0, 8*Math.cos(0.25*t)))
+        this.shapes.s3.draw(context, program_state, model_transform, this.materials.planet2)
     }
 }
 
