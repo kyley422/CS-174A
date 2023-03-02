@@ -39,6 +39,8 @@ export class Assignment3 extends Scene {
                 {ambient: 0, diffusivity: 0.3, specularity: 1, color: hex_color("#80FFFF")}),
             planet2_gouraud: new Material(new Gouraud_Shader(),
                 {ambient: 0, diffusivity: 0.3, specularity: 1, color: hex_color("#80FFFF")}),
+            planet3: new Material(new defs.Phong_Shader(),
+                {ambient: 0, diffusivity: 1, specularity: 1, color: hex_color("#B08040")}),
         }
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
@@ -108,7 +110,12 @@ export class Assignment3 extends Scene {
         }
 
         /* Planet 3 */
-
+        model_transform = Mat4.identity()
+        model_transform = model_transform.times(Mat4.translation(11*Math.sin(0.6*t), 0, 11*Math.cos(0.6*t)))
+        model_transform = model_transform.times(Mat4.rotation(0.6*t,0,1,0))
+        this.shapes.s4.draw(context, program_state, model_transform, this.materials.planet3)
+        model_transform = model_transform.times(Mat4.scale(2,2,0.1))
+        this.shapes.torus.draw(context, program_state, model_transform, this.materials.planet3)
     }
 }
 
