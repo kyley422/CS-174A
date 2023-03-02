@@ -13,7 +13,7 @@ export class Assignment3 extends Scene {
         this.shapes = {
             torus: new defs.Torus(15, 15),
             torus2: new defs.Torus(3, 15),
-            s1: new defs.Subdivision_Sphere(1),
+            s1: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(1),
             s2: new (defs.Subdivision_Sphere.prototype.make_flat_shaded_version())(2),
             s3: new defs.Subdivision_Sphere(3),
             s4: new defs.Subdivision_Sphere(4),
@@ -41,6 +41,10 @@ export class Assignment3 extends Scene {
                 {ambient: 0, diffusivity: 0.3, specularity: 1, color: hex_color("#80FFFF")}),
             planet3: new Material(new defs.Phong_Shader(),
                 {ambient: 0, diffusivity: 1, specularity: 1, color: hex_color("#B08040")}),
+            planet4: new Material(new defs.Phong_Shader(),
+                {ambient: 0, specularity: 0.8, color: hex_color("#0047AB")}),
+            moon: new Material(new defs.Phong_Shader(),
+                {ambient: 0, diffusivity: 0.5, specularity:0, color: hex_color("#DE3163")}),
         }
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
@@ -114,8 +118,19 @@ export class Assignment3 extends Scene {
         model_transform = model_transform.times(Mat4.translation(11*Math.sin(0.6*t), 0, 11*Math.cos(0.6*t)))
         model_transform = model_transform.times(Mat4.rotation(0.6*t,0,1,0))
         this.shapes.s4.draw(context, program_state, model_transform, this.materials.planet3)
+        /* Ring */
         model_transform = model_transform.times(Mat4.scale(3,3,0.1))
         this.shapes.torus.draw(context, program_state, model_transform, this.materials.ring)
+
+        /* Planet 4 */
+        model_transform = Mat4.identity()
+        model_transform = model_transform.times(Mat4.translation(14*Math.sin(0.4*t), 0, 14*Math.cos(0.4*t)))
+        model_transform = model_transform.times(Mat4.rotation(0.4*t,0,1,0))
+        this.shapes.s4.draw(context, program_state, model_transform, this.materials.planet4)
+        /* Moon */
+        model_transform = model_transform.times(Mat4.translation(2.5*Math.sin(0.2*t), 0, 2.5*Math.cos(0.2*t)))
+        model_transform = model_transform.times(Mat4.rotation(0.2*t,0,1,0))
+        this.shapes.s1.draw(context, program_state, model_transform, this.materials.moon)
     }
 }
 
