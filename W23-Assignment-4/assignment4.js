@@ -47,10 +47,15 @@ export class Assignment4 extends Scene {
         }
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
+        this.rotationOn = false;
+        this.box1_transform_saved = Mat4.identity().times(Mat4.translation(-2,0,0));
+        this.box2_transform_saved = Mat4.identity().times(Mat4.translation(2,0,0));
     }
 
     make_control_panel() {
         // TODO:  Implement requirement #5 using a key_triggered_button that responds to the 'c' key.
+        this.key_triggered_button("Cube rotation", ["c"], () => {this.rotationOn = !this.rotationOn});
+        this.new_line();
     }
 
     display(context, program_state) {
@@ -67,15 +72,20 @@ export class Assignment4 extends Scene {
         program_state.lights = [new Light(light_position, color(1, 1, 1, 1), 1000)];
 
         let t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
-        let model_transform = Mat4.identity();
+        let box1_transform = this.box1_transform_saved;
+        let box2_transform = this.box2_transform_saved;
 
         // TODO:  Draw the required boxes. Also update their stored matrices.
         // You can remove the folloeing line.
         // this.shapes.axis.draw(context, program_state, model_transform, this.materials.phong.override({color: hex_color("#ffff00")}));
-        model_transform = model_transform.times(Mat4.translation(-2,0,0))
-        this.shapes.box_1.draw(context, program_state, model_transform, this.materials.stars)
-        model_transform = Mat4.identity().times(Mat4.translation(2,0,0))
-        this.shapes.box_2.draw(context, program_state, model_transform, this.materials.earth)
+        if (this.rotationOn) {
+            box1_transform = box1_transform.times(Mat4.rotation((2/3)*Math.PI*dt,1,0,0))
+            box2_transform = box2_transform.times(Mat4.rotation(Math.PI*dt,0,1,0))
+        }
+        this.shapes.box_1.draw(context, program_state, box1_transform, this.materials.stars)
+        this.shapes.box_2.draw(context, program_state, box2_transform, this.materials.earth)
+        this.box1_transform_saved = box1_transform;
+        this.box2_transform_saved = box2_transform;
     }
 }
 
