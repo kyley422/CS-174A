@@ -23,8 +23,9 @@ export class Assignment4 extends Scene {
             box_2: new Cube(),
             axis: new Axis_Arrows()
         }
-        console.log(this.shapes.box_1.arrays.texture_coord)
-
+        // console.log(this.shapes.box_1.arrays.texture_coord)
+        // console.log(this.shapes.box_2.arrays.texture_coord.map((coords) => coords.map((coord) => coord/2)))
+        this.shapes.box_2.arrays.texture_coord = this.shapes.box_2.arrays.texture_coord.map((coords) => coords.map((coord) => coord*2))
 
         // TODO:  Create the materials required to texture both cubes with the correct images and settings.
         //        Make each Material from the correct shader.  Phong_Shader will work initially, but when
@@ -33,11 +34,16 @@ export class Assignment4 extends Scene {
             phong: new Material(new Textured_Phong(), {
                 color: hex_color("#ffffff"),
             }),
-            texture: new Material(new Textured_Phong(), {
-                color: hex_color("#ffffff"),
-                ambient: 0.5, diffusivity: 0.1, specularity: 0.1,
-                texture: new Texture("assets/stars.png")
+            stars: new Material(new Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 1, diffusivity: 0.1, specularity: 0.1,
+                texture: new Texture("assets/stars.png", "NEAREST")
             }),
+            earth: new Material(new Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 1, diffusivity: 0.1, specularity: 0.1,
+                texture: new Texture("assets/earth.gif", "LINEAR_MIPMAP_LINEAR")
+            })
         }
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
@@ -65,7 +71,11 @@ export class Assignment4 extends Scene {
 
         // TODO:  Draw the required boxes. Also update their stored matrices.
         // You can remove the folloeing line.
-        this.shapes.axis.draw(context, program_state, model_transform, this.materials.phong.override({color: hex_color("#ffff00")}));
+        // this.shapes.axis.draw(context, program_state, model_transform, this.materials.phong.override({color: hex_color("#ffff00")}));
+        model_transform = model_transform.times(Mat4.translation(-2,0,0))
+        this.shapes.box_1.draw(context, program_state, model_transform, this.materials.stars)
+        model_transform = Mat4.identity().times(Mat4.translation(2,0,0))
+        this.shapes.box_2.draw(context, program_state, model_transform, this.materials.earth)
     }
 }
 
