@@ -39,7 +39,7 @@ export class Assignment4 extends Scene {
                 ambient: 1, diffusivity: 0.1, specularity: 0.1,
                 texture: new Texture("assets/stars.png", "NEAREST")
             }),
-            earth: new Material(new Textured_Phong(), {
+            earth: new Material(new Texture_Scroll_X(), {
                 color: hex_color("#000000"),
                 ambient: 1, diffusivity: 0.1, specularity: 0.1,
                 texture: new Texture("assets/earth.gif", "LINEAR_MIPMAP_LINEAR")
@@ -79,8 +79,8 @@ export class Assignment4 extends Scene {
         // You can remove the folloeing line.
         // this.shapes.axis.draw(context, program_state, model_transform, this.materials.phong.override({color: hex_color("#ffff00")}));
         if (this.rotationOn) {
-            box1_transform = box1_transform.times(Mat4.rotation((2/3)*Math.PI*dt,1,0,0))
-            box2_transform = box2_transform.times(Mat4.rotation(Math.PI*dt,0,1,0))
+            box1_transform = box1_transform.times(Mat4.rotation(((2/3)*Math.PI*dt) % 3,1,0,0))
+            box2_transform = box2_transform.times(Mat4.rotation((Math.PI*dt) % 3,0,1,0))
         }
         this.shapes.box_1.draw(context, program_state, box1_transform, this.materials.stars)
         this.shapes.box_2.draw(context, program_state, box2_transform, this.materials.earth)
@@ -100,7 +100,9 @@ class Texture_Scroll_X extends Textured_Phong {
             
             void main(){
                 // Sample the texture image in the correct place:
-                vec4 tex_color = texture2D( texture, f_tex_coord);
+                vec2 trans_f_tex_coord = f_tex_coord;
+                trans_f_tex_coord.x -= 2.0 * mod(animation_time, 3.0);
+                vec4 tex_color = texture2D( texture, trans_f_tex_coord);
                 if( tex_color.w < .01 ) discard;
                                                                          // Compute an initial (ambient) color:
                 gl_FragColor = vec4( ( tex_color.xyz + shape_color.xyz ) * ambient, shape_color.w * tex_color.w ); 
