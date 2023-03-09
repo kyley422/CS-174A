@@ -34,7 +34,7 @@ export class Assignment4 extends Scene {
             phong: new Material(new Textured_Phong(), {
                 color: hex_color("#ffffff"),
             }),
-            stars: new Material(new Textured_Phong(), {
+            stars: new Material(new Texture_Rotate(), {
                 color: hex_color("#000000"),
                 ambient: 1, diffusivity: 0.1, specularity: 0.1,
                 texture: new Texture("assets/stars.png", "NEAREST")
@@ -121,8 +121,17 @@ class Texture_Rotate extends Textured_Phong {
             uniform sampler2D texture;
             uniform float animation_time;
             void main(){
+                vec2 new_texture = f_tex_coord;
+                new_texture.x -= 0.5;
+                new_texture.y -= 0.5;
+                float PI = 3.14159265359;
+                float Rotation = -mod(0.25*animation_time,3.0) * 2.0 * PI;
+                mat2 rotate_f_tex_coord = mat2(cos(Rotation),sin(Rotation),-sin(Rotation),cos(Rotation));
+                new_texture = rotate_f_tex_coord * new_texture;
+                new_texture.x += 0.5;
+                new_texture.y += 0.5;
                 // Sample the texture image in the correct place:
-                vec4 tex_color = texture2D( texture, f_tex_coord );
+                vec4 tex_color = texture2D( texture, new_texture );
                 if( tex_color.w < .01 ) discard;
                                                                          // Compute an initial (ambient) color:
                 gl_FragColor = vec4( ( tex_color.xyz + shape_color.xyz ) * ambient, shape_color.w * tex_color.w ); 
