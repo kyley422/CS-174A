@@ -103,6 +103,23 @@ class Texture_Scroll_X extends Textured_Phong {
                 vec2 trans_f_tex_coord = f_tex_coord;
                 trans_f_tex_coord.x -= 2.0 * mod(animation_time, 3.0);
                 vec4 tex_color = texture2D( texture, trans_f_tex_coord);
+                
+                float u = mod(trans_f_tex_coord.x, 1.0);
+                float v = mod(trans_f_tex_coord.y, 1.0);
+                
+                if (u > 0.15 && u < 0.25 && v > 0.15 && v < 0.85) {
+                    tex_color = vec4(0, 0, 0, 1.0);
+                }
+                if (v > 0.75 && v < 0.85 && u > 0.15 && u < 0.85) {
+                    tex_color = vec4(0, 0, 0, 1.0);
+                }
+                if (u > 0.75 && u < 0.85 && v > 0.15 && v < 0.85) {
+                    tex_color = vec4(0, 0, 0, 1.0);
+                }
+                if (v > 0.15 && v < 0.25 && u > 0.15 && u < 0.85) {
+                    tex_color = vec4(0, 0, 0, 1.0);
+                }
+
                 if( tex_color.w < .01 ) discard;
                                                                          // Compute an initial (ambient) color:
                 gl_FragColor = vec4( ( tex_color.xyz + shape_color.xyz ) * ambient, shape_color.w * tex_color.w ); 
@@ -132,6 +149,23 @@ class Texture_Rotate extends Textured_Phong {
                 new_texture.y += 0.5;
                 // Sample the texture image in the correct place:
                 vec4 tex_color = texture2D( texture, new_texture );
+
+                float u = mod(new_texture.x, 1.0);
+                float v = mod(new_texture.y, 1.0);
+                
+                if (u > 0.15 && u < 0.25 && v > 0.15 && v < 0.85) {
+                    tex_color = vec4(0, 0, 0, 1.0);
+                }
+                if (v > 0.75 && v < 0.85 && u > 0.15 && u < 0.85) {
+                    tex_color = vec4(0, 0, 0, 1.0);
+                }
+                if (u > 0.75 && u < 0.85 && v > 0.15 && v < 0.85) {
+                    tex_color = vec4(0, 0, 0, 1.0);
+                }
+                if (v > 0.15 && v < 0.25 && u > 0.15 && u < 0.85) {
+                    tex_color = vec4(0, 0, 0, 1.0);
+                }
+
                 if( tex_color.w < .01 ) discard;
                                                                          // Compute an initial (ambient) color:
                 gl_FragColor = vec4( ( tex_color.xyz + shape_color.xyz ) * ambient, shape_color.w * tex_color.w ); 
